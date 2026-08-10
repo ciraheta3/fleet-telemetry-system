@@ -1,0 +1,19 @@
+# Virtual Environment
+.venv/
+venv/
+
+# Python Bytecode & Caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Local Data & Warehouses (Module 1 outputs)
+data/raw/*
+*.duckdb
+*.duckdb.wal
+
+# IDE / OS settings
+.DS_Store
+.vscode/
+.cursor/
