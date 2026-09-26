@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 import pytest
 from pydantic import ValidationError
 
-from src.models.telemetry import OperatingState, VehicleState
+from telemetry_engine.models.vehicle_state import OperatingState, VehicleState
 
 def test_moving_vehicle_with_positive_speed_is_valid():
     vehicle = VehicleState(
