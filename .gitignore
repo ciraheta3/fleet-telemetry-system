@@ -17,3 +17,5 @@ data/raw/*
 .DS_Store
 .vscode/
 .cursor/
+
+*.egg-info/
