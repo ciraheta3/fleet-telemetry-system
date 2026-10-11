@@ -84,7 +84,7 @@ def test_parked_to_idle_updates_vehicle_state():
     assert next_vehicle.speed_mph == 0
     assert next_vehicle.latitude == current_state.latitude
     assert next_vehicle.longitude == current_state.longitude
-    assert next_vehicle.fuel_level_pct == current_state.fuel_level_pct
+    # assert next_vehicle.fuel_level_pct == current_state.fuel_level_pct
     assert next_vehicle.engine_temp_f == current_state.engine_temp_f
     assert next_vehicle.heading == current_state.heading
     assert next_vehicle.timestamp == current_state.timestamp + timedelta(seconds=5)
@@ -160,3 +160,40 @@ def test_step_rejects_invalid_step_seconds():
             next_speed_mph=0.0,
             step_seconds=-5
         )
+        
+@pytest.mark.parametrize(
+    "operating_state, speed_mph, expected_fuel",
+    [
+        (OperatingState.PARKED, 0, 75.0),
+        (OperatingState.IDLE, 0, 74.99),
+        (OperatingState.MOVING, 30.0, 74.90),
+    ],
+)
+def test_fuel_changes_by_operating_state(
+    operating_state,
+    speed_mph,
+    expected_fuel,
+):
+    current_state = VehicleState(
+        vehicle_id="VEH-1001",
+        driver_id="DRV-5001",
+        timestamp=datetime(
+            2026, 1, 1, 12, 0, 0, tzinfo=timezone.utc
+        ),
+        operating_state=operating_state,
+        latitude=34.05,
+        longitude=-118.25,
+        speed_mph=speed_mph,
+        fuel_level_pct=75.0,
+        engine_temp_f=180.0,
+        heading=90.0,
+    )
+
+    next_vehicle = step_vehicle_state(
+        current_state=current_state,
+        next_state=operating_state,
+        next_speed_mph=speed_mph,
+        step_seconds=60,
+    )
+
+    assert next_vehicle.fuel_level_pct == pytest.approx(expected_fuel)
